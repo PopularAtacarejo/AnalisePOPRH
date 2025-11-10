@@ -522,3 +522,5 @@ tbody tr:hover {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+/* Importar estilos de filtros */
+@import url('filtros.css');

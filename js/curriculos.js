@@ -29,27 +29,48 @@ const Curriculos = {
         try {
             const filtros = await API.call('/api/admin/filtros');
             
+            // CORREÇÃO: Verificar se os dados existem antes de usar forEach
             const filterVaga = document.getElementById('filter-vaga');
-            filtros.vagas.forEach(vaga => {
-                const option = new Option(vaga, vaga);
-                filterVaga.add(option);
-            });
-
             const filterCidade = document.getElementById('filter-cidade');
-            filtros.cidades.forEach(cidade => {
-                const option = new Option(cidade, cidade);
-                filterCidade.add(option);
-            });
+            
+            // Limpar options existentes, mantendo apenas a primeira opção
+            while (filterVaga.children.length > 1) filterVaga.removeChild(filterVaga.lastChild);
+            while (filterCidade.children.length > 1) filterCidade.removeChild(filterCidade.lastChild);
+
+            // Preencher filtro de vagas com verificação de segurança
+            if (filtros && Array.isArray(filtros.vagas)) {
+                filtros.vagas.forEach(vaga => {
+                    if (vaga && vaga.trim() !== '') {
+                        const option = new Option(vaga, vaga);
+                        filterVaga.add(option);
+                    }
+                });
+            } else {
+                console.warn('Dados de vagas não disponíveis ou formato inválido');
+            }
+
+            // Preencher filtro de cidades com verificação de segurança
+            if (filtros && Array.isArray(filtros.cidades)) {
+                filtros.cidades.forEach(cidade => {
+                    if (cidade && cidade.trim() !== '') {
+                        const option = new Option(cidade, cidade);
+                        filterCidade.add(option);
+                    }
+                });
+            } else {
+                console.warn('Dados de cidades não disponíveis ou formato inválido');
+            }
 
         } catch (error) {
             console.error('Erro ao carregar filtros:', error);
+            // Não interrompe o funcionamento da página se os filtros falharem
         }
     },
 
     displayCurriculos(curriculos) {
         const corpoTabela = document.getElementById('corpo-tabela');
         
-        if (curriculos.length === 0) {
+        if (!curriculos || curriculos.length === 0) {
             corpoTabela.innerHTML = `
                 <tr>
                     <td colspan="7" style="text-align: center; padding: 2rem; color: var(--legend-text);">
@@ -63,11 +84,11 @@ const Curriculos = {
 
         corpoTabela.innerHTML = curriculos.map(curriculo => `
             <tr>
-                <td><strong>${curriculo.nome}</strong></td>
-                <td>${curriculo.vaga}</td>
-                <td>${curriculo.cidade}</td>
-                <td>${curriculo.bairro}</td>
-                <td><span class="badge ${curriculo.transporte === 'Sim' ? 'badge-success' : 'badge-warning'}">${curriculo.transporte}</span></td>
+                <td><strong>${curriculo.nome || 'N/A'}</strong></td>
+                <td>${curriculo.vaga || 'N/A'}</td>
+                <td>${curriculo.cidade || 'N/A'}</td>
+                <td>${curriculo.bairro || 'N/A'}</td>
+                <td><span class="badge ${curriculo.transporte === 'Sim' ? 'badge-success' : 'badge-warning'}">${curriculo.transporte || 'N/A'}</span></td>
                 <td>${Utils.formatarData(curriculo.enviado_em)}</td>
                 <td>
                     <button class="action-btn view" onclick="Curriculos.visualizarCandidato(${curriculo.id})" title="Ver detalhes">
@@ -90,7 +111,7 @@ const Curriculos = {
         
         paginationInfo.textContent = `Mostrando ${Utils.formatarNumero(total)} registros`;
         
-        if (totalPages <= 1) {
+        if (!totalPages || totalPages <= 1) {
             pagination.innerHTML = '';
             return;
         }
@@ -132,6 +153,11 @@ const Curriculos = {
     async calcularDistanciaCandidato(id) {
         try {
             const candidato = await API.call(`/api/admin/candidaturas/${id}`);
+            if (!candidato.rua || !candidato.bairro || !candidato.cidade) {
+                alert('Endereço do candidato incompleto para cálculo de distância.');
+                return;
+            }
+            
             const enderecoCandidato = `${candidato.rua}, ${candidato.bairro}, ${candidato.cidade}`;
             
             const resultado = await API.call('/api/admin/calcular-distancia', {
@@ -196,11 +222,18 @@ const Curriculos = {
 
 // Event listeners para filtros
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('aplicar-filtros').addEventListener('click', () => {
-        Curriculos.aplicarFiltros();
-    });
-
-    document.getElementById('limpar-filtros').addEventListener('click', () => {
-        Curriculos.limparFiltros();
-    });
+    const aplicarFiltrosBtn = document.getElementById('aplicar-filtros');
+    const limparFiltrosBtn = document.getElementById('limpar-filtros');
+    
+    if (aplicarFiltrosBtn) {
+        aplicarFiltrosBtn.addEventListener('click', () => {
+            Curriculos.aplicarFiltros();
+        });
+    }
+    
+    if (limparFiltrosBtn) {
+        limparFiltrosBtn.addEventListener('click', () => {
+            Curriculos.limparFiltros();
+        });
+    }
 });

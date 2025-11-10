@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/filtros.css">
 </head>
 <body data-theme="light">
   <div class="app-container">
@@ -129,17 +130,17 @@
                 <option value="distantes">Mais distantes</option>
               </select>
             </div>
-          </div>
-          <div class="filter-actions">
-            <div class="filter-group" style="flex: 1;">
+            <div class="filter-group search-group">
               <label for="filter-search">Buscar (Nome, CPF ou Telefone)</label>
               <input type="text" id="filter-search" class="filter-input" placeholder="Digite para buscar...">
             </div>
+          </div>
+          <div class="filter-actions">
             <button class="btn btn-primary" id="aplicar-filtros">
-              <i class="fas fa-filter"></i> Aplicar Filtros
+              <i class="fas fa-search"></i> Buscar
             </button>
             <button class="btn btn-secondary" id="limpar-filtros">
-              <i class="fas fa-eraser"></i> Limpar
+              <i class="fas fa-eraser"></i> Limpar Filtros
             </button>
           </div>
         </div>

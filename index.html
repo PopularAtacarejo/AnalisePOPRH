@@ -624,16 +624,13 @@
                 buttonLoading.style.display = 'inline-block';
 
                 // Fazer login com Supabase
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
-                if (error) {
-                    throw error;
-                }
+                const data = await authManager.login(email, password);
+                if (!data || data.error) {
+            throw data.error || new Error("Erro desconhecido no login.");
+        }
 
                 // Login bem-sucedido
+        // O token já foi salvo no localStorage pela função login do AuthManager
                 showAlert('Login realizado com sucesso! Redirecionando...', 'success');
                 
                 // Salvar email se "Lembrar de mim" estiver marcado
@@ -642,10 +639,10 @@
                     localStorage.setItem('rememberMe', 'true');
                 }
                 
-                // Redirecionar para dashboard
-                setTimeout(() => {
-                    window.location.href = REDIRECT_AFTER_LOGIN;
-                }, 1500);
+               // Redirecionar para o painel
+        setTimeout(() => {
+            window.location.href = 'admin.html'; // Redireciona para o painel
+        }, 1500);
 
             } catch (error) {
                 console.error('Erro no login:', error);

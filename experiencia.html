@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Experiência de Trabalho | FormulárioBK Admin</title>
+  <title>Experiência de Trabalho |Popular Atacarejo</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -36,6 +36,8 @@
       --period-completed-border: #4CAF50;
       --period-expired: rgba(244, 67, 54, 0.15);
       --period-expired-border: #f44336;
+      --period-contracted: rgba(0, 150, 136, 0.15);
+      --period-contracted-border: #009688;
     }
 
     * {
@@ -534,6 +536,17 @@
       box-shadow: 0 4px 8px rgba(37, 211, 102, 0.3);
     }
 
+    .btn-success {
+      background-color: var(--success-color);
+      color: var(--white);
+    }
+
+    .btn-success:hover {
+      background-color: #388E3C;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+    }
+
     .btn:disabled {
       opacity: 0.7;
       cursor: not-allowed;
@@ -650,6 +663,11 @@
       border-left-color: var(--period-expired-border);
     }
 
+    .table tbody tr.period-contracted {
+      background-color: var(--period-contracted);
+      border-left-color: var(--period-contracted-border);
+    }
+
     .badge {
       display: inline-block;
       padding: 0.25rem 0.5rem;
@@ -681,6 +699,11 @@
 
     .badge.period-expired {
       background-color: var(--period-expired-border);
+      color: white;
+    }
+
+    .badge.period-contracted {
+      background-color: var(--period-contracted-border);
       color: white;
     }
 
@@ -757,6 +780,10 @@
       border-left-color: var(--warning-color);
     }
 
+    .stat-card.contracted {
+      border-left-color: var(--period-contracted-border);
+    }
+
     .stat-icon {
       width: 48px;
       height: 48px;
@@ -791,6 +818,11 @@
     .stat-card.renewal .stat-icon {
       background-color: rgba(255, 152, 0, 0.1);
       color: var(--warning-color);
+    }
+
+    .stat-card.contracted .stat-icon {
+      background-color: rgba(0, 150, 136, 0.1);
+      color: var(--period-contracted-border);
     }
 
     .stat-value {
@@ -1266,7 +1298,7 @@
           </a>
         </div>
         <div class="nav-item">
-          <a href="experiencia.html" class="nav-link">
+          <a href="experiencia.html" class="nav-link active">
             <i class="fas fa-briefcase"></i>
             <span>Experiência</span>
           </a>
@@ -1395,6 +1427,14 @@
         <div class="stat-value" id="renewalCount">0</div>
         <div class="stat-label">Renovações</div>
       </div>
+      
+      <div class="stat-card contracted">
+        <div class="stat-icon">
+          <i class="fas fa-user-check"></i>
+        </div>
+        <div class="stat-value" id="contractedCount">0</div>
+        <div class="stat-label">Contratados</div>
+      </div>
     </div>
 
     <section class="card">
@@ -1416,6 +1456,7 @@
             <option value="renewal">Renovação</option>
             <option value="completed">Concluído</option>
             <option value="expired">Expirado</option>
+            <option value="contracted">Contratado</option>
           </select>
         </div>
         <div>
@@ -1679,6 +1720,68 @@
     </div>
   </div>
 
+  <!-- Modal de Contratação -->
+  <div id="contract-modal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <strong id="contract-modal-title">
+          <i class="fas fa-check-circle"></i>
+          Contratar Funcionário
+        </strong>
+        <button id="contract-modal-close" class="btn btn-ghost">
+          <i class="fas fa-times"></i>
+          Fechar
+        </button>
+      </div>
+
+      <div class="modal-body" style="padding: 2rem;">
+        <div class="modal-section">
+          <div class="modal-section-title">
+            <i class="fas fa-info-circle"></i>
+            Informações da Contratação
+          </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Funcionário:</div>
+              <div class="info-value" id="contract-employee-name">...</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Vaga:</div>
+              <div class="info-value" id="contract-vaga">...</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Período atual:</div>
+              <div class="info-value" id="contract-current-period">...</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Status:</div>
+              <div class="info-value">Contratado</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Data de término atual:</div>
+              <div class="info-value" id="contract-current-end">...</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Data da contratação:</div>
+              <div class="info-value" id="contract-date">...</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: flex-end;">
+          <button id="contract-cancel-btn" class="btn btn-secondary">
+            <i class="fas fa-times"></i>
+            Cancelar
+          </button>
+          <button id="contract-confirm-btn" class="btn btn-success">
+            <i class="fas fa-check"></i>
+            Confirmar Contratação
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Container para notificações toast -->
   <div class="toast-container" id="toast-container"></div>
 
@@ -1792,8 +1895,16 @@
         let period = item.period;
         let status = item.status || 'active';
 
-        if (daysRemaining < 0) { status = 'expired'; period = 'expired'; }
-        else if (daysRemaining <= 0) { status = 'completed'; period = 'completed'; }
+        // Tratar o status "contracted"
+        if (status === 'contracted') {
+          period = 'contracted';
+        } else if (daysRemaining < 0) { 
+          status = 'expired'; 
+          period = 'expired'; 
+        } else if (daysRemaining <= 0) { 
+          status = 'completed'; 
+          period = 'completed'; 
+        }
 
         let progress = 0;
         if (daysPassed >= 0 && totalDays > 0) {
@@ -1801,8 +1912,13 @@
         }
 
         let canRenew = false;
-        if (item.phase === 'first' && daysRemaining <= 5 && daysRemaining > 0 && status !== 'completed') {
+        if (item.phase === 'first' && daysRemaining <= 5 && daysRemaining > 0 && status !== 'completed' && status !== 'contracted') {
           canRenew = true;
+        }
+
+        let canContract = false;
+        if (status !== 'contracted' && status !== 'completed' && daysRemaining <= 10) {
+          canContract = true;
         }
 
         return {
@@ -1827,6 +1943,7 @@
           period,
           status,
           canRenew,
+          canContract,
           phase: item.phase || 'unknown'
         };
       });
@@ -1879,6 +1996,40 @@
       }
     }
     
+    // Função para atualizar o status de um funcionário em experiência
+    async function updateEmployeeStatus(experienceId, status) {
+      checkSupabaseClient();
+      
+      if (!experienceId) {
+        throw new Error('ID da experiência é obrigatório');
+      }
+      
+      if (!status) {
+        throw new Error('Status é obrigatório');
+      }
+      
+      // Validar status permitidos
+      const validStatuses = ['active', 'completed', 'expired', 'renewed', 'contracted'];
+      if (!validStatuses.includes(status)) {
+        throw new Error(`Status inválido. Status permitidos: ${validStatuses.join(', ')}`);
+      }
+      
+      const { data, error } = await window.supabase
+        .from('employee_experience')
+        .update({ 
+          status,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', experienceId)
+        .select();
+        
+      if (error) {
+        throw new Error('Erro ao atualizar status: ' + error.message);
+      }
+      
+      return data;
+    }
+    
     // Funções auxiliares necessárias para as correções
     function normalizeCandidatura(rec) {
       return { ...rec, nome_completo: rec.nome || rec.nome_completo || '', criado_em: rec.enviado_em || rec.criado_em || rec.created_at || null };
@@ -1896,19 +2047,64 @@
       return (data || []).map(it => ({ ...it, nome_exibicao: it.owner_name || (it.usuario_id === null ? 'Sistema' : 'Usuário') }));
     }
     function calculateStats(data) {
-      const stats = { total: data.length, period40Days: 0, period80Days: 0, renewal: 0, completed: 0, expired: 0, firstPhase: 0, secondPhase: 0, canRenew: 0 };
+      const stats = { total: data.length, period40Days: 0, period80Days: 0, renewal: 0, completed: 0, expired: 0, contracted: 0, firstPhase: 0, secondPhase: 0, canRenew: 0, canContract: 0 };
       data.forEach(item => {
-        switch (item.period) { case '40days': stats.period40Days++; break; case '80days': stats.period80Days++; break; case 'renewal': stats.renewal++; break; case 'completed': stats.completed++; break; case 'expired': stats.expired++; break; }
-        switch (item.phase) { case 'first': stats.firstPhase++; break; case 'second': stats.secondPhase++; break; }
+        switch (item.period) { 
+          case '40days': stats.period40Days++; break; 
+          case '80days': stats.period80Days++; break; 
+          case 'renewal': stats.renewal++; break; 
+          case 'completed': stats.completed++; break; 
+          case 'expired': stats.expired++; break; 
+          case 'contracted': stats.contracted++; break; 
+        }
+        switch (item.phase) { 
+          case 'first': stats.firstPhase++; break; 
+          case 'second': stats.secondPhase++; break; 
+        }
         if (item.canRenew) stats.canRenew++;
+        if (item.canContract) stats.canContract++;
       });
       return stats;
+    }
+
+    // Função para obter opções de filtro
+    async function getFilterOptions() {
+      checkSupabaseClient();
+      
+      try {
+        // Obter vagas únicas
+        const { data: vagasData, error: vagasError } = await window.supabase
+          .from('candidaturas')
+          .select('vaga')
+          .not('vaga', 'is', null);
+          
+        if (vagasError) throw vagasError;
+        
+        const vagas = [...new Set(vagasData?.map(item => item.vaga).filter(Boolean) || [])];
+        
+        // Obter cidades únicas
+        const { data: cidadesData, error: cidadesError } = await window.supabase
+          .from('candidaturas')
+          .select('cidade')
+          .not('cidade', 'is', null);
+          
+        if (cidadesError) throw cidadesError;
+        
+        const cidades = [...new Set(cidadesData?.map(item => item.cidade).filter(Boolean) || [])];
+        
+        return { vagas, cidades };
+      } catch (error) {
+        console.error('Erro ao obter opções de filtro:', error);
+        return { vagas: [], cidades: [] };
+      }
     }
 
     // Aplica as correções ao objeto global window.dataAccess
     if (window.dataAccess) {
       window.dataAccess.getExperienceEmployees = getExperienceEmployees;
       window.dataAccess.getEmployeeProfile = getEmployeeProfile;
+      window.dataAccess.updateEmployeeStatus = updateEmployeeStatus;
+      window.dataAccess.getFilterOptions = getFilterOptions;
     } else {
       console.error("window.dataAccess não encontrado. As correções não puderam ser aplicadas.");
     }
@@ -2099,6 +2295,7 @@
     const period80DaysEl = document.getElementById('period80Days');
     const completedPeriodEl = document.getElementById('completedPeriod');
     const renewalCountEl = document.getElementById('renewalCount');
+    const contractedCountEl = document.getElementById('contractedCount');
 
     // Elementos do modal de perfil
     const profileModal = document.getElementById('profile-modal');
@@ -2123,23 +2320,60 @@
     const renewalCancelBtn = document.getElementById('renewal-cancel-btn');
     const renewalConfirmBtn = document.getElementById('renewal-confirm-btn');
 
+    // Elementos do modal de contratação
+    const contractModal = document.getElementById('contract-modal');
+    const contractModalClose = document.getElementById('contract-modal-close');
+    const contractCancelBtn = document.getElementById('contract-cancel-btn');
+    const contractConfirmBtn = document.getElementById('contract-confirm-btn');
+
     let lastFilters = {};
     let currentProfileId = null;
     let currentRenewalId = null;
     let currentRenewalData = null;
+    let currentContractId = null;
+    let currentContractData = null;
 
     // Funções auxiliares para períodos
     function getPeriodClass(period) {
-      switch(period) { case '40days': return 'period-40days'; case '80days': return 'period-80days'; case 'renewal': return 'period-renewal'; case 'completed': return 'period-completed'; case 'expired': return 'period-expired'; default: return ''; }
+      switch(period) { 
+        case '40days': return 'period-40days'; 
+        case '80days': return 'period-80days'; 
+        case 'renewal': return 'period-renewal'; 
+        case 'completed': return 'period-completed'; 
+        case 'expired': return 'period-expired'; 
+        case 'contracted': return 'period-contracted'; 
+        default: return ''; 
+      }
     }
     function getPeriodBadgeClass(period) {
-      switch(period) { case '40days': return 'period-40days'; case '80days': return 'period-80days'; case 'renewal': return 'period-renewal'; case 'completed': return 'period-completed'; case 'expired': return 'period-expired'; default: return ''; }
+      switch(period) { 
+        case '40days': return 'period-40days'; 
+        case '80days': return 'period-80days'; 
+        case 'renewal': return 'period-renewal'; 
+        case 'completed': return 'period-completed'; 
+        case 'expired': return 'period-expired'; 
+        case 'contracted': return 'period-contracted'; 
+        default: return ''; 
+      }
     }
     function getPeriodLabel(period) {
-      switch(period) { case '40days': return '40 dias'; case '80days': return '80 dias'; case 'renewal': return 'Renovação'; case 'completed': return 'Concluído'; case 'expired': return 'Expirado'; default: return period || '—'; }
+      switch(period) { 
+        case '40days': return '40 dias'; 
+        case '80days': return '80 dias'; 
+        case 'renewal': return 'Renovação'; 
+        case 'completed': return 'Concluído'; 
+        case 'expired': return 'Expirado'; 
+        case 'contracted': return 'Contratado'; 
+        default: return period || '—'; 
+      }
     }
     function getPhaseLabel(phase) {
-      switch(phase) { case 'first': return 'Primeira fase'; case 'second': return 'Segunda fase'; case 'single': return 'Período único'; default: return '—'; }
+      switch(phase) { 
+        case 'first': return 'Primeira fase'; 
+        case 'second': return 'Segunda fase'; 
+        case 'single': return 'Período único'; 
+        default: return '—'; 
+      }
     }
     function getProgressClass(daysRemaining) {
       if (daysRemaining < 0) return 'danger';
@@ -2258,11 +2492,31 @@
       currentRenewalData = null;
     }
 
+    function openContractModal(experienceData) {
+      currentContractId = experienceData.id;
+      currentContractData = experienceData;
+      document.getElementById('contract-employee-name').textContent = experienceData.nome || '—';
+      document.getElementById('contract-vaga').textContent = experienceData.vaga || '—';
+      document.getElementById('contract-current-period').textContent = getPeriodLabel(experienceData.period);
+      document.getElementById('contract-current-end').textContent = experienceData.endDate || '—';
+      document.getElementById('contract-date').textContent = new Date().toLocaleDateString('pt-BR');
+      contractModal.style.display = 'flex';
+    }
+
+    function closeContractModal() {
+      contractModal.style.display = 'none';
+      currentContractId = null;
+      currentContractData = null;
+    }
+
     profileModalClose.addEventListener('click', closeProfileModal);
     profileModal.addEventListener('click', (e) => { if (e.target === profileModal) { closeProfileModal(); } });
     renewalModalClose.addEventListener('click', closeRenewalModal);
     renewalCancelBtn.addEventListener('click', closeRenewalModal);
     renewalModal.addEventListener('click', (e) => { if (e.target === renewalModal) { closeRenewalModal(); } });
+    contractModalClose.addEventListener('click', closeContractModal);
+    contractCancelBtn.addEventListener('click', closeContractModal);
+    contractModal.addEventListener('click', (e) => { if (e.target === contractModal) { closeContractModal(); } });
 
     renewalConfirmBtn.addEventListener('click', async () => {
       if (!currentRenewalId) { showToast('Nenhuma experiência selecionada para renovação', 'warning'); return; }
@@ -2277,6 +2531,26 @@
         showToast('Erro ao renovar experiência: ' + error.message, 'error');
       } finally {
         setButtonLoading(renewalConfirmBtn, false);
+      }
+    });
+
+    contractConfirmBtn.addEventListener('click', async () => {
+      if (!currentContractId) { 
+        showToast('Nenhuma experiência selecionada para contratação', 'warning'); 
+        return; 
+      }
+      
+      setButtonLoading(contractConfirmBtn, true);
+      try {
+        await window.dataAccess.updateEmployeeStatus(currentContractId, 'contracted');
+        showToast('Funcionário contratado com sucesso!', 'success');
+        closeContractModal();
+        await load(lastFilters);
+      } catch (error) {
+        console.error('Erro ao contratar funcionário:', error);
+        showToast('Erro ao contratar funcionário: ' + error.message, 'error');
+      } finally {
+        setButtonLoading(contractConfirmBtn, false);
       }
     });
 
@@ -2351,7 +2625,6 @@
         pVaga.textContent = profileData.candidatura.vaga || '—';
         pCidade.textContent = profileData.candidatura.cidade ? 
           (profileData.candidatura.bairro ? `${profileData.candidatura.bairro} - ${profileData.candidatura.cidade || ''}` : profileData.candidatura.cidade || '—') : '—';
-        // CORREÇÃO: Adicionado o parêntese de fechamento que faltava
         pRuaCep.textContent = (profileData.candidatura.rua ? `${profileData.candidatura.rua} • ${profileData.candidatura.cep || ''}` : profileData.candidatura.cep || '—');
         pTransporte.textContent = profileData.candidatura.transporte || '—';
         
@@ -2367,7 +2640,7 @@
             <div class="timeline-content">
               <div class="timeline-title">${getPeriodLabel(experience.period)} - ${getPhaseLabel(experience.phase)}</div>
               <div class="timeline-description">
-                ${experience.status === 'renewed' ? 'Período renovado' : experience.status === 'active' ? 'Período ativo' : experience.status === 'completed' ? 'Período concluído' : 'Período expirado'}
+                ${experience.status === 'renewed' ? 'Período renovado' : experience.status === 'active' ? 'Período ativo' : experience.status === 'completed' ? 'Período concluído' : experience.status === 'contracted' ? 'Contratado' : 'Período expirado'}
               </div>
             </div>
           </div>
@@ -2475,6 +2748,12 @@
                   Renovar
                 </button>
               ` : ''}
+              ${r.canContract ? `
+                <button class="btn btn-success btn-contract" data-id="${r.id}" data-data='${JSON.stringify(r).replace(/'/g, '&apos;')}'>
+                  <i class="fas fa-check-circle"></i>
+                  Contratar
+                </button>
+              ` : ''}
               <button class="btn btn-primary btn-profile" data-id="${r.id}" data-candidatura-id="${r.candidatura_id}">
                 <i class="fas fa-user"></i>
                 Perfil
@@ -2495,6 +2774,13 @@
           btn.addEventListener('click', (e) => {
             const experienceData = JSON.parse(e.currentTarget.dataset.data);
             openRenewalModal(experienceData);
+          });
+        });
+
+        document.querySelectorAll('.btn-contract').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const experienceData = JSON.parse(e.currentTarget.dataset.data);
+            openContractModal(experienceData);
           });
         });
 
@@ -2519,6 +2805,7 @@
       period80DaysEl.textContent = stats.period80Days || 0;
       completedPeriodEl.textContent = stats.completed || 0;
       renewalCountEl.textContent = stats.renewal || 0;
+      contractedCountEl.textContent = stats.contracted || 0;
     }
 
     periodSelect.addEventListener('change', scheduleRefresh);

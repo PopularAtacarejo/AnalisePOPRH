@@ -1,17 +1,3 @@
-Entendi. Você solicitou que a paginação fosse de 20 resultados por página, e o código fornecido já *tinha* essa configuração (`itemsPerPage: 20`). No entanto, você testou e constatou que **a paginação não está funcionando**.
-
-Isso indica um **problema de funcionalidade**, provavelmente na comunicação com a API (através de `window.dataAccess.getCandidaturas(filters)`), ou na forma como os dados da paginação são processados ou exibidos, **não necessariamente na configuração de 20 itens**.
-
-O código abaixo é o mesmo arquivo HTML que você forneceu, mas com **correções aplicadas** para resolver os problemas mais comuns que impedem o funcionamento correto da paginação, incluindo:
-
-1.  **Valores Padrão e Validação:** Garantir que `total`, `totalPages`, `page` e `limit` sejam números válidos antes de usá-los.
-2.  **Tratamento de Erros:** Melhorar o tratamento de erros para não quebrar a lógica de paginação se a API retornar dados inesperados.
-3.  **Resiliência da Lógica de Paginação:** Certificar-se de que a paginação não falha se a API não retornar os campos de paginação esperados, calculando-os localmente como fallback (embora o ideal seja que venham da API).
-4.  **Feedback Visual:** Melhorar o feedback visual da paginação e dos dados carregados.
-
-A configuração de `20` itens por página (`itemsPerPage: 20`) permanece inalterada, pois já estava correta.
-
-```html
 <!doctype html>
 <html lang="pt-BR">
 <head>

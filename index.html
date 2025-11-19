@@ -10,20 +10,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0D1117; /* Preto mais profundo, estilo GitHub */
-            --accent-color: #238636; /* Verde mais vibrante e moderno */
+            /* Cores modo escuro (padrão) */
+            --primary-color: #0D1117;
+            --accent-color: #238636;
             --accent-hover: #2EA043;
-            --background-color: #F6F8FA;
-            --surface-color: #FFFFFF;
-            --text-primary: #0D1117;
-            --text-secondary: #656D76;
-            --border-color: #D0D7DE;
-            --error-color: #CF222E;
-            --whatsapp-color: #25D366;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-            --shadow-md: 0 3px 6px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --background-color: #0D1117; /* Fundo escuro */
+            --surface-color: #161B22; /* Superfície do card */
+            --text-primary: #F6F8FA; /* Texto principal */
+            --text-secondary: #8B949E; /* Texto secundário */
+            --text-tertiary: #656D76; /* Placeholder */
+            --border-color: #30363D; /* Borda */
+            --border-focus: #6E7681; /* Borda foco */
+            --error-color: #CF222E; /* Erro */
+            --whatsapp-color: #25D366; /* Verde do WhatsApp */
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.1);
+            --shadow-md: 0 3px 6px rgba(0,0,0,0.2);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.3);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 12px;
+            --input-padding: 0.875rem 1rem;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 0.75rem;
+            --spacing-md: 1.25rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 2.5rem;
         }
 
         * {
@@ -36,84 +46,163 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--background-color);
             color: var(--text-primary);
-            line-height: 1.7;
+            line-height: 1.6;
             display: flex;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            /* Efeito de fundo com partículas ou gradiente animado */
+            background-image: radial-gradient(circle at 10% 20%, rgba(35, 134, 54, 0.05) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(35, 134, 54, 0.05) 0%, transparent 20%);
+            overflow: hidden;
+        }
+
+        /* Animação de fundo sutil */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(125deg, rgba(13, 17, 23, 0.8), rgba(22, 27, 34, 0.9));
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+            transition: opacity 0.5s;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .split-view {
             display: flex;
             width: 100%;
+            min-height: 100vh;
+            position: relative;
+            z-index: 10;
         }
 
         .branding-section {
             flex: 1;
-            background: linear-gradient(160deg, var(--primary-color) 0%, #161B22 100%);
+            background: linear-gradient(160deg, var(--primary-color) 0%, #0a0e14 100%);
             color: var(--surface-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 3rem;
+            padding: var(--spacing-xl);
             text-align: center;
             position: relative;
             overflow: hidden;
         }
 
+        /* Efeito de animação nas bordas do branding */
         .branding-section::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop') center/cover;
-            opacity: 0.08;
+            top: -50%;
+            left: -50%;
+            right: -50%;
+            bottom: -50%;
+            background: conic-gradient(from 0deg, transparent, var(--accent-color), transparent 30%);
+            animation: rotate 20s linear infinite;
             z-index: 0;
+        }
+
+        .branding-section::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: var(--primary-color);
+            z-index: 1;
         }
 
         .branding-content {
             position: relative;
-            z-index: 1;
+            z-index: 2;
             max-width: 420px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .brand-logo {
             font-size: 3.5rem;
             font-weight: 800;
             letter-spacing: -1.5px;
-            margin-bottom: 1rem;
+            margin-bottom: var(--spacing-md);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
         }
 
         .brand-logo i {
             font-size: 3rem;
             color: var(--accent-color);
-            filter: drop-shadow(0 0 8px rgba(35, 134, 54, 0.5));
+            filter: drop-shadow(0 0 10px rgba(35, 134, 54, 0.7));
         }
 
         .brand-tagline {
             font-size: 1.2rem;
             font-weight: 500;
             opacity: 0.9;
-            margin-bottom: 2.5rem;
+            margin-bottom: var(--spacing-lg);
             color: #E6EDF3;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
         }
 
         .brand-features {
             list-style: none;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
         }
 
         .brand-features li {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.25rem;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
             font-weight: 400;
             color: #C9D1D9;
+            opacity: 0;
+            animation: slideInLeft 0.5s ease-out forwards;
+        }
+
+        .brand-features li:nth-child(1) { animation-delay: 0.5s; }
+        .brand-features li:nth-child(2) { animation-delay: 0.7s; }
+        .brand-features li:nth-child(3) { animation-delay: 0.9s; }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .brand-features i {
@@ -125,76 +214,68 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 2rem;
-            background-color: var(--surface-color);
-            box-shadow: inset 1px 0 0 var(--border-color);
+            padding: var(--spacing-lg);
+            background: transparent;
         }
 
         .form-container {
             width: 100%;
             max-width: 420px;
-            padding: 2.5rem;
-            border-radius: 12px;
+            padding: var(--spacing-xl);
+            border-radius: var(--border-radius);
             box-shadow: var(--shadow-lg);
             border: 1px solid var(--border-color);
+            background-color: var(--surface-color);
+            transition: var(--transition);
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+            backdrop-filter: blur(10px);
+            background-color: rgba(22, 27, 34, 0.85);
         }
 
         .form-header {
-            margin-bottom: 2.5rem;
+            margin-bottom: var(--spacing-xl);
             text-align: center;
         }
 
         .form-title {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 0.5rem;
+            margin-bottom: var(--spacing-xs);
         }
 
         .form-subtitle {
             color: var(--text-secondary);
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .form-group {
-            margin-bottom: 2rem;
+            margin-bottom: var(--spacing-md);
             position: relative;
         }
 
         .form-group input {
             width: 100%;
-            padding: 1.25rem 0 0.75rem 0;
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid var(--border-color);
+            padding: var(--input-padding);
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
             font-size: 1rem;
             font-weight: 500;
             color: var(--text-primary);
             transition: var(--transition);
+            appearance: none;
         }
 
         .form-group input:focus {
             outline: none;
-            border-bottom-color: var(--accent-color);
-            box-shadow: 0 1px 0 0 var(--accent-color);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(35, 134, 54, 0.3);
+            background-color: rgba(255, 255, 255, 0.08);
         }
 
-        .form-group label {
-            position: absolute;
-            top: 1.25rem;
-            left: 0;
-            font-size: 1rem;
-            color: var(--text-secondary);
-            transition: var(--transition);
-            pointer-events: none;
-        }
-
-        .form-group input:focus + label,
-        .form-group input:not(:placeholder-shown) + label {
-            top: -0.25rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--accent-color);
+        .form-group input::placeholder {
+            color: var(--text-tertiary);
         }
 
         .password-wrapper {
@@ -204,7 +285,7 @@
         .password-toggle {
             position: absolute;
             top: 50%;
-            right: 0;
+            right: 1rem;
             transform: translateY(-50%);
             background: none;
             border: none;
@@ -213,6 +294,7 @@
             padding: 0.5rem;
             font-size: 1.1rem;
             transition: var(--transition);
+            z-index: 1;
         }
 
         .password-toggle:hover {
@@ -222,37 +304,53 @@
         .btn-submit {
             width: 100%;
             padding: 1rem;
-            background-color: var(--accent-color);
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
             color: var(--surface-color);
             border: none;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            margin-top: 1.5rem;
+            margin-top: var(--spacing-sm);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
             box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-submit:hover::before {
+            left: 100%;
         }
 
         .btn-submit:hover {
-            background-color: var(--accent-hover);
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
         }
 
         .btn-submit:disabled {
-            background-color: var(--text-secondary);
+            background: var(--text-secondary);
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
 
         #message {
-            margin-top: 1.5rem;
+            margin-top: var(--spacing-md);
             font-size: 0.9rem;
             text-align: center;
             min-height: 1.2rem;
@@ -265,7 +363,7 @@
         }
 
         .form-footer {
-            margin-top: 2rem;
+            margin-top: var(--spacing-lg);
             text-align: center;
             font-size: 0.9rem;
         }
@@ -277,10 +375,11 @@
             font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
+            text-decoration: underline;
         }
 
         .form-footer button:hover {
-            text-decoration: underline;
+            color: var(--accent-hover);
         }
 
         /* --- Estilos do Modal --- */
@@ -291,29 +390,32 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(13, 17, 23, 0.7);
+            background-color: rgba(13, 17, 23, 0.9);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             padding: 1rem;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(5px);
         }
 
         .modal-content {
             background-color: var(--surface-color);
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             box-shadow: var(--shadow-lg);
             width: 100%;
             max-width: 450px;
             animation: modalSlideIn 0.3s ease-out;
             border: 1px solid var(--border-color);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            background-color: rgba(22, 27, 34, 0.95);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 1.5rem 1rem;
+            padding: var(--spacing-md) var(--spacing-lg);
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -339,32 +441,51 @@
         }
 
         .modal-body {
-            padding: 1.5rem;
+            padding: var(--spacing-lg);
             font-size: 0.95rem;
             color: var(--text-secondary);
         }
 
         .modal-footer {
-            padding: 1rem 1.5rem 1.5rem;
+            padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
             text-align: center;
+            border-top: 1px solid var(--border-color);
         }
 
         .btn-whatsapp {
             display: inline-flex;
             align-items: center;
             gap: 0.75rem;
-            background-color: var(--whatsapp-color);
+            background: linear-gradient(45deg, var(--whatsapp-color), #128C7E);
             color: var(--surface-color);
             text-decoration: none;
             padding: 0.875rem 1.5rem;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-weight: 600;
             font-size: 1rem;
             transition: var(--transition);
+            width: 100%;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+         .btn-whatsapp::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-whatsapp:hover::before {
+            left: 100%;
         }
 
         .btn-whatsapp:hover {
-            background-color: #128C7E;
             transform: translateY(-1px);
             box-shadow: var(--shadow-md);
         }
@@ -387,15 +508,105 @@
             }
         }
 
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Estilo para o feedback de sucesso */
+        .feedback-container {
+            display: none; /* Inicialmente escondido */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .feedback-content {
+            padding: var(--spacing-xl);
+            max-width: 420px;
+            width: 100%;
+            border-radius: var(--border-radius);
+            background-color: var(--surface-color);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            background-color: rgba(22, 27, 34, 0.85);
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .feedback-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .feedback-message {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .loading-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .loading-indicator .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(35, 134, 54, 0.2);
+            border-top-color: var(--accent-color);
+            border-radius: 50%;
+        }
+
         /* Responsividade */
         @media (max-width: 968px) {
-            .branding-section { display: none; }
-            .form-section { flex: 1; box-shadow: none; }
+            .split-view {
+                flex-direction: column;
+            }
+            .branding-section {
+                display: flex;
+                padding: var(--spacing-lg) var(--spacing-md);
+            }
+            .form-section {
+                box-shadow: none;
+                padding: var(--spacing-md);
+            }
+            .form-container {
+                padding: var(--spacing-lg);
+            }
         }
+
         @media (max-width: 480px) {
-            .form-section { padding: 1rem; }
-            .form-container { padding: 1.5rem; }
-            .form-title { font-size: 1.5rem; }
+            .form-section {
+                padding: var(--spacing-sm);
+            }
+            .form-container {
+                padding: var(--spacing-md);
+            }
+            .form-title {
+                font-size: 1.5rem;
+            }
+            .brand-tagline {
+                font-size: 1rem;
+            }
+            .brand-features li {
+                font-size: 0.9rem;
+            }
+            .btn-whatsapp {
+                padding: 0.75rem 1rem;
+            }
         }
     </style>
 </head>
@@ -425,15 +636,15 @@
                 
                 <form id="login-form-inner">
                     <div class="form-group">
-                        <input type="email" id="email" placeholder=" " required autocomplete="email">
-                        <label for="email">E-mail Corporativo</label>
+                        <input type="email" id="email" placeholder="seu.email@empresa.com" required autocomplete="email">
+                        <label for="email" style="display: none;">E-mail Corporativo</label>
                     </div>
                     <div class="form-group">
                         <div class="password-wrapper">
-                            <input type="password" id="password" placeholder=" " required autocomplete="current-password">
-                            <label for="password">Senha</label>
-                            <button type="button" id="toggle-password" class="password-toggle">
-                                <i class="fas fa-eye"></i>
+                            <input type="password" id="password" placeholder="Digite sua senha" required autocomplete="current-password">
+                            <label for="password" style="display: none;">Senha</label>
+                            <button type="button" id="toggle-password" class="password-toggle" aria-label="Mostrar/ocultar senha">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
@@ -447,21 +658,36 @@
                     <button type="button" id="forgot-password-btn">Esqueceu sua senha?</button>
                 </div>
             </div>
+
+            <!-- Feedback de sucesso -->
+            <div id="login-success-feedback" class="feedback-container">
+                <div class="feedback-content">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2 class="feedback-title">Autenticação Bem-Sucedida</h2>
+                    <p class="feedback-message">Seu login foi realizado com sucesso. Bem-vindo ao CurrículoPro.</p>
+                    <div class="loading-indicator">
+                        <div class="spinner"></div>
+                        <p>Acessando o sistema...</p>
+                    </div>
+                </div>
+            </div>
         </section>
     </div>
 
     <!-- Modal de Esqueci a Senha -->
-    <div id="forgot-password-modal" class="modal-backdrop">
+    <div id="forgot-password-modal" class="modal-backdrop" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Redefinir Senha</h2>
-                <button id="close-modal-btn" class="btn-close">&times;</button>
+                <h2 id="modal-title">Redefinir Senha</h2>
+                <button id="close-modal-btn" class="btn-close" aria-label="Fechar">&times;</button>
             </div>
             <div class="modal-body">
                 <p>Para redefinir sua senha, entre em contato com o administrador do sistema através do WhatsApp.</p>
             </div>
             <div class="modal-footer">
-                <a href="https://wa.me/55829991584?text=Olá, Jeferson. Preciso de ajuda para redefinir minha senha de acesso." target="_blank" class="btn-whatsapp">
+                <a href="https://wa.me/55829991584?text=Olá, Jeferson. Preciso de ajuda para redefinir minha senha de acesso." target="_blank" class="btn-whatsapp" rel="noopener noreferrer">
                     <i class="fab fa-whatsapp"></i> Falar com Jeferson
                 </a>
             </div>
@@ -484,13 +710,24 @@
             const btnText = document.getElementById('btn-text');
             const togglePasswordBtn = document.getElementById('toggle-password');
             const togglePasswordIcon = togglePasswordBtn.querySelector('i');
+            const modal = document.getElementById('forgot-password-modal');
+            const formContainer = document.querySelector('.form-container'); // Container do formulário
+            const feedbackElement = document.getElementById('login-success-feedback'); // Container do feedback
+
+            // --- Validação em tempo real ---
+            emailInput.addEventListener('input', () => {
+                if (emailInput.validity.typeMismatch) {
+                    emailInput.setCustomValidity('Por favor, insira um endereço de e-mail válido.');
+                } else {
+                    emailInput.setCustomValidity('');
+                }
+            });
 
             // --- Lógica de Mostrar/Ocultar Senha ---
             togglePasswordBtn.addEventListener('click', () => {
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                 passwordInput.setAttribute('type', type);
                 
-                // Troca o ícone
                 if (type === 'password') {
                     togglePasswordIcon.classList.remove('fa-eye-slash');
                     togglePasswordIcon.classList.add('fa-eye');
@@ -503,17 +740,34 @@
             // --- Lógica do Login ---
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const email = emailInput.value;
+                const email = emailInput.value.trim();
                 const password = passwordInput.value;
 
+                if (!email || !password) {
+                    messageElement.textContent = 'Por favor, preencha todos os campos.';
+                    messageElement.classList.add('error');
+                    return;
+                }
+
                 submitBtn.disabled = true;
-                btnText.innerHTML = '<i class="fas fa-spinner spinner"></i> Autenticando...';
+                btnText.innerHTML = '<i class="fas fa-spinner spinner" aria-hidden="true"></i> Autenticando...';
                 messageElement.textContent = '';
                 messageElement.className = '';
                 
                 try {
                     await window.authManager.login(email, password);
-                    window.location.href = 'dashboard.html';
+
+                    // --- Feedback de Sucesso ---
+                    // 1. Esconde o formulário
+                    formContainer.style.display = 'none';
+
+                    // 2. Exibe o feedback de sucesso
+                    feedbackElement.style.display = 'flex'; // Torna o feedback visível
+
+                    // 3. Redireciona após um breve delay
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000); // 2 segundos
 
                 } catch (error) {
                     console.error("Erro de login:", error.message);
@@ -528,22 +782,29 @@
             // Redireciona se o usuário já estiver autenticado
             setTimeout(() => {
                 if (window.authManager && window.authManager.isAuthenticated()) { 
-                    window.location.href = 'dashboard.html';
+                    // Mesmo redirecionamento com feedback
+                    formContainer.style.display = 'none';
+                    feedbackElement.style.display = 'flex';
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
                 }
             }, 500);
 
-
             // --- Lógica do Modal de "Esqueceu a Senha" ---
             const forgotPasswordBtn = document.getElementById('forgot-password-btn');
-            const modal = document.getElementById('forgot-password-modal');
             const closeModalBtn = document.getElementById('close-modal-btn');
 
             function openModal() {
                 modal.style.display = 'flex';
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
             }
 
             function closeModal() {
                 modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
             }
 
             forgotPasswordBtn.addEventListener('click', openModal);
@@ -554,7 +815,14 @@
                     closeModal();
                 }
             });
+
+            window.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && modal.style.display === 'flex') {
+                    closeModal();
+                }
+            });
         });
     </script>
 </body>
 </html>
+

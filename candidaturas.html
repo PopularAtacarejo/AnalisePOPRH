@@ -1110,6 +1110,11 @@
       font-size: 0.75rem;
       opacity: 0.7;
     }
+    /* Linha marcada como vista (amarelo suave) */
+    .table tbody tr.status-visto {
+      background-color: rgba(255, 235, 59, 0.12);
+      border-left-color: #FFEB3B;
+    }
   </style>
 </head>
 <body>
@@ -1269,6 +1274,14 @@
             <option value="passou na entrevista">Passou na Entrevista</option>
             <option value="já está trabalhando">Já Está Trabalhando</option>
             <option value="contratado">Contratado</option>
+          </select>
+        </div>
+        <div>
+          <label for="visto">Visto</label>
+          <select id="visto" name="visto">
+            <option value="">Todos</option>
+            <option value="visto">Vistos</option>
+            <option value="nao_visto">Não vistos</option>
           </select>
         </div>
         <div>
@@ -1671,6 +1684,7 @@
     const prevPageBtn = document.getElementById('prev-page');
     const nextPageBtn = document.getElementById('next-page');
     const pageNumbers = document.getElementById('page-numbers');
+    const vistoSelect = document.getElementById('visto');
     const nomeInput = document.getElementById('nome');
     const nomeSuggestionsEl = document.getElementById('nome-suggestions');
     const modalBack = document.getElementById('modal-back');
@@ -2104,6 +2118,9 @@
           `;
           // --- NOVO CONTEÚDO DA CÉLULA DE VISUALIZAÇÃO ---
           const visualizacao = r.ultima_visualizacao;
+          if (visualizacao) {
+            tr.classList.add('status-visto');
+          }
           let vistoCellContent = `<span class="small">—</span>`;
           if (visualizacao) {
             try {
@@ -2172,7 +2189,25 @@
             mStatusSelect.innerHTML = '<option>Carregando...</option>';
             try {
               // Registra a visualização ANTES de carregar os detalhes
-              await window.dataAccess.updateUltimaVisualizacao(id);
+              const updateRes = await window.dataAccess.updateUltimaVisualizacao(id);
+              // Atualiza a linha na tabela imediatamente para indicar que foi vista
+              try {
+                const tr = document.querySelector(`.btn-open[data-id="${id}"]`)?.closest('tr');
+                if (tr) {
+                  tr.classList.add('status-visto');
+                  // atualiza célula de "Visto" (índice 6)
+                  const vis = updateRes && (updateRes.ultima_visualizacao || updateRes);
+                  if (vis) {
+                    const dt = new Date(vis.data || vis.visto_em || new Date().toISOString());
+                    const dateStr = isNaN(dt) ? '—' : dt.toLocaleString('pt-BR');
+                    if (tr.cells && tr.cells[6]) {
+                      tr.cells[6].innerHTML = `<div class="view-info"><span class="badge view">${dateStr}</span><div class="view-info-user small">por ${vis.nome || 'Usuário'}</div></div>`;
+                    }
+                  }
+                }
+              } catch (e) {
+                console.warn('Falha ao atualizar linha como vista:', e);
+              }
 
               // Carrega status options com cache
               const statusOptions = await getCachedData('statusOptions', () => window.dataAccess.getStatusOptions());
@@ -2448,6 +2483,7 @@
       debouncedSuggest();
       scheduleRefresh();
     });
+    if (vistoSelect) vistoSelect.addEventListener('change', scheduleRefresh);
     document.addEventListener('click', (e) => {
       if (!nomeInput.contains(e.target) && !nomeSuggestionsEl.contains(e.target)) {
         nomeSuggestionsEl.style.display = 'none';
